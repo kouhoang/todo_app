@@ -23,7 +23,7 @@ class SplashView extends StatelessWidget {
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.secondary,
         body: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

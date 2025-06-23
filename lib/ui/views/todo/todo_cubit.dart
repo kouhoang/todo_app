@@ -116,7 +116,7 @@ class TodoCubit extends Cubit<TodoState> {
     try {
       await _todoRepository.deleteTodo(todoId);
 
-      // Manual refresh để đảm bảo UI được update
+      // Manual refresh to ensure UI is updated
       await refreshTodos();
     } catch (e) {
       emit(TodoError(e.toString()));

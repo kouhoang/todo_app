@@ -318,7 +318,7 @@ class _HomeViewBody extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
-            color: Colors.blue.withOpacity(0.1),
+            color: Colors.blue.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -335,36 +335,38 @@ class _HomeViewBody extends StatelessWidget {
   }
 
   void _showAddTodoModel(BuildContext context) async {
+    final todoCubit = context.read<TodoCubit>(); // Save reference before async
+
     final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (modalContext) => BlocProvider.value(
-        value: context.read<TodoCubit>(),
-        child: const AddTodoView(),
-      ),
+      builder: (modalContext) =>
+          BlocProvider.value(value: todoCubit, child: const AddTodoView()),
     );
 
-    // Refresh nếu có thay đổi
+    // Refresh if having changed
     if (result == true) {
-      context.read<TodoCubit>().refreshTodos();
+      todoCubit.refreshTodos();
     }
   }
 
   void _showEditTodoModel(BuildContext context, TodoEntity todo) async {
+    final todoCubit = context.read<TodoCubit>(); // Save reference before async
+
     final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (modalContext) => BlocProvider.value(
-        value: context.read<TodoCubit>(),
+        value: todoCubit,
         child: AddTodoView(todo: todo),
       ),
     );
 
     // Refresh if having changed
     if (result == true) {
-      context.read<TodoCubit>().refreshTodos();
+      todoCubit.refreshTodos();
     }
   }
 

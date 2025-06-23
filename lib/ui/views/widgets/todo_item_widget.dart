@@ -30,7 +30,7 @@ class TodoItemWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -50,7 +50,7 @@ class TodoItemWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: _getCategoryColor(
                     todo.category,
-                  ).withOpacity(isCompleted ? 0.05 : 0.1),
+                  ).withAlpha(isCompleted ? 13 : 26),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -62,7 +62,7 @@ class TodoItemWidget extends StatelessWidget {
                       height: 20,
                       color: _getCategoryColor(
                         todo.category,
-                      ).withOpacity(isCompleted ? 0.3 : 1.0),
+                      ).withAlpha(isCompleted ? 77 : 255),
                     ),
                   ),
                 ),
@@ -82,13 +82,13 @@ class TodoItemWidget extends StatelessWidget {
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: isCompleted
-                            ? AppColors.textTertiary.withOpacity(0.5)
+                            ? AppColors.textTertiary.withValues(alpha: 0.5)
                             : AppColors.textPrimary,
                         decoration: isCompleted
                             ? TextDecoration.lineThrough
                             : TextDecoration.none,
                         decorationColor: isCompleted
-                            ? AppColors.textTertiary.withOpacity(0.5)
+                            ? AppColors.textTertiary.withValues(alpha: 0.5)
                             : null,
                         decorationThickness: isCompleted ? 2.0 : null,
                       ),
@@ -104,7 +104,7 @@ class TodoItemWidget extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         color: isCompleted
-                            ? AppColors.textSecondary.withOpacity(0.4)
+                            ? AppColors.textSecondary.withValues(alpha: 0.4)
                             : isOverdue
                             ? AppColors.error
                             : AppColors.textSecondary,
@@ -115,7 +115,7 @@ class TodoItemWidget extends StatelessWidget {
                             ? TextDecoration.lineThrough
                             : TextDecoration.none,
                         decorationColor: isCompleted
-                            ? AppColors.textSecondary.withOpacity(0.4)
+                            ? AppColors.textSecondary.withValues(alpha: 0.4)
                             : null,
                         decorationThickness: isCompleted ? 1.5 : null,
                       ),
@@ -129,13 +129,13 @@ class TodoItemWidget extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11,
                           color: isCompleted
-                              ? AppColors.textSecondary.withOpacity(0.3)
-                              : AppColors.textSecondary.withOpacity(0.7),
+                              ? AppColors.textSecondary.withValues(alpha: 0.3)
+                              : AppColors.textSecondary.withValues(alpha: 0.7),
                           decoration: isCompleted
                               ? TextDecoration.lineThrough
                               : TextDecoration.none,
                           decorationColor: isCompleted
-                              ? AppColors.textSecondary.withOpacity(0.3)
+                              ? AppColors.textSecondary.withValues(alpha: 0.3)
                               : null,
                         ),
                         maxLines: 1,
@@ -152,7 +152,7 @@ class TodoItemWidget extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.error.withOpacity(0.1),
+                          color: AppColors.error.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(

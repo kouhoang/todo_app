@@ -49,10 +49,10 @@ class CategorySelectorWidget extends StatelessWidget {
                   height: 48,
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? (isEnabled ? color : color.withOpacity(0.3))
+                        ? (isEnabled ? color : color.withValues(alpha: 0.3))
                         : (isEnabled
-                              ? color.withOpacity(0.1)
-                              : color.withOpacity(0.05)),
+                              ? color.withValues(alpha: 0.1)
+                              : color.withValues(alpha: 0.05)),
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: Colors.white,
@@ -69,8 +69,10 @@ class CategorySelectorWidget extends StatelessWidget {
                         color: isSelected
                             ? (isEnabled
                                   ? Colors.black
-                                  : Colors.black.withOpacity(0.5))
-                            : (isEnabled ? color : color.withOpacity(0.5)),
+                                  : Colors.black.withValues(alpha: 0.5))
+                            : (isEnabled
+                                  ? color
+                                  : color.withValues(alpha: 0.5)),
                       ),
                     ),
                   ),
