@@ -14,47 +14,57 @@ class CategorySelectorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: TodoCategory.values.map((category) {
-        final isSelected = category == selectedCategory;
-        final color = _getCategoryColor(category);
-
-        return Expanded(
-          child: GestureDetector(
-            onTap: () => onCategorySelected(category),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isSelected ? color : color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isSelected ? color : Colors.transparent,
-                  width: 2,
-                ),
-              ),
-              child: Column(
-                children: [
-                  Icon(
-                    _getCategoryIcon(category),
-                    color: isSelected ? Colors.white : color,
-                    size: 24,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    category.displayName,
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : color,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          // Label Category
+          Text(
+            'Category',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+              fontFamily: 'Inter',
             ),
           ),
-        );
-      }).toList(),
+
+          const SizedBox(width: 16),
+
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: TodoCategory.values.map((category) {
+              final isSelected = category == selectedCategory;
+              final color = _getCategoryColor(category);
+
+              return GestureDetector(
+                onTap: () => onCategorySelected(category),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 6),
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: isSelected ? color : color.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: isSelected ? 2 : 1,
+                    ),
+                  ),
+                  child: Center(
+                    child: Image.asset(
+                      _getCategoryIconAsset(category),
+                      width: 20,
+                      height: 20,
+                      color: isSelected ? Colors.black : color,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -69,14 +79,14 @@ class CategorySelectorWidget extends StatelessWidget {
     }
   }
 
-  IconData _getCategoryIcon(TodoCategory category) {
+  String _getCategoryIconAsset(TodoCategory category) {
     switch (category) {
       case TodoCategory.work:
-        return Icons.work;
+        return 'assets/file-list-line.png';
       case TodoCategory.personal:
-        return Icons.person;
+        return 'assets/calendar-event-fill.png';
       case TodoCategory.important:
-        return Icons.star;
+        return 'assets/trophy-line.png';
     }
   }
 }

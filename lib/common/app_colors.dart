@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:hybrid_hex_color_converter/hybrid_hex_color_converter.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFF6366F1);
-  static const Color secondary = Color(0xFF8B5CF6);
-  static const Color background = Color(0xFFF8FAFC);
-  static const Color surface = Colors.white;
-  static const Color error = Color(0xFFEF4444);
-  static const Color success = Color(0xFF10B981);
-  static const Color warning = Color(0xFFF59E0B);
+  static final Color primary = HexColor.fromHex('#6366F1');
+  static final Color secondary = HexColor.fromHex('#4A3780');
+  static final Color background = HexColor.fromHex('#F1F5F9');
+  static final Color surface = HexColor.fromHex('#FFFFFF');
+  static final Color error = HexColor.fromHex('#EF4444');
+  static final Color success = HexColor.fromHex('#10B981');
+  static final Color warning = HexColor.fromHex('#F59E0B');
 
   // Task Category Colors
-  static const Color workCategory = Color(0xFF3B82F6);
-  static const Color personalCategory = Color(0xFF8B5CF6);
-  static const Color importantCategory = Color(0xFFF59E0B);
+  static final Color workCategory = HexColor.fromHex('#3B82F6');
+  static final Color personalCategory = HexColor.fromHex('#8B5CF6');
+  static final Color importantCategory = HexColor.fromHex('#F59E0B');
 
   // Text Colors
-  static const Color textPrimary = Color(0xFF1F2937);
-  static const Color textSecondary = Color(0xFF6B7280);
-  static const Color textTertiary = Color(0xFF9CA3AF);
+  static final Color textPrimary = HexColor.fromHex('#1F2937');
+  static final Color textSecondary = HexColor.fromHex('#6B7280');
+  static final Color textTertiary = HexColor.fromHex('#9CA3AF');
 }

@@ -40,9 +40,9 @@ class _HomeViewBody extends StatelessWidget {
             _buildHeader(context),
             Expanded(
               child: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.background,
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
                   ),
@@ -129,7 +129,7 @@ class _HomeViewBody extends StatelessWidget {
               // Completed Section
               if (completedTodos.isNotEmpty) ...[
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'Completed',
                   style: TextStyle(
                     fontSize: 20,

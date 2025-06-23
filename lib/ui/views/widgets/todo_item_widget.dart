@@ -46,16 +46,17 @@ class TodoItemWidget extends StatelessWidget {
             children: [
               // Category Icon
               Container(
-                width: 40,
-                height: 40,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
                   color: _getCategoryColor(todo.category).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  _getCategoryIcon(todo.category),
+                child: Image.asset(
+                  _getCategoryIconAsset(todo.category),
+                  width: 20,
+                  height: 20,
                   color: _getCategoryColor(todo.category),
-                  size: 20,
                 ),
               ),
 
@@ -84,16 +85,19 @@ class TodoItemWidget extends StatelessWidget {
 
                     Row(
                       children: [
-                        Text(
-                          todo.time != null
-                              ? AppDateUtils.formatDateTime(todo.time!)
-                              : AppDateUtils.formatDate(todo.date),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isOverdue
-                                ? AppColors.error
-                                : AppColors.textSecondary,
-                            fontWeight: isOverdue ? FontWeight.w500 : null,
+                        Flexible(
+                          child: Text(
+                            todo.time != null
+                                ? AppDateUtils.formatDateTime(todo.time!)
+                                : AppDateUtils.formatDate(todo.date),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isOverdue
+                                  ? AppColors.error
+                                  : AppColors.textSecondary,
+                              fontWeight: isOverdue ? FontWeight.w500 : null,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
 
@@ -108,7 +112,7 @@ class TodoItemWidget extends StatelessWidget {
                               color: AppColors.error.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Overdue',
                               style: TextStyle(
                                 fontSize: 10,
@@ -131,7 +135,6 @@ class TodoItemWidget extends StatelessWidget {
                   // Complete/Uncomplete Button
                   InkWell(
                     onTap: onToggle,
-                    borderRadius: BorderRadius.circular(20),
                     child: Container(
                       width: 24,
                       height: 24,
@@ -168,7 +171,7 @@ class TodoItemWidget extends StatelessWidget {
                         color: AppColors.error.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.delete_outline,
                         color: AppColors.error,
                         size: 16,
@@ -195,14 +198,14 @@ class TodoItemWidget extends StatelessWidget {
     }
   }
 
-  IconData _getCategoryIcon(TodoCategory category) {
+  String _getCategoryIconAsset(TodoCategory category) {
     switch (category) {
       case TodoCategory.work:
-        return Icons.work_outline;
+        return 'assets/file-list-line.png';
       case TodoCategory.personal:
-        return Icons.person_outline;
+        return 'assets/calendar-event-fill.png';
       case TodoCategory.important:
-        return Icons.star_outline;
+        return 'assets/trophy-line.png';
     }
   }
 }
