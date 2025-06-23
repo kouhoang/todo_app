@@ -95,13 +95,14 @@ class SupabaseService {
     }
   }
 
-  // Real-time subscription
+  // Improved Real-time subscription
   static RealtimeChannel subscribeToTodos(
     String userId,
     Function(List<TodoEntity>) onUpdate,
   ) {
-    return _client
-        .channel('todos')
+    final channel = _client.channel('public:todos:user_id=eq.$userId');
+
+    return channel
         .onPostgresChanges(
           event: PostgresChangeEvent.all,
           schema: 'public',
@@ -112,9 +113,14 @@ class SupabaseService {
             value: userId,
           ),
           callback: (payload) async {
-            // Refresh todos when changes occur
-            final todos = await getTodos(userId);
-            onUpdate(todos);
+            print('Real-time update received: ${payload.eventType}');
+            try {
+              // Refresh todos when changes occur
+              final todos = await getTodos(userId);
+              onUpdate(todos);
+            } catch (e) {
+              print('Error in real-time callback: $e');
+            }
           },
         )
         .subscribe();

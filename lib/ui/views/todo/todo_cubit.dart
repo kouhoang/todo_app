@@ -12,29 +12,78 @@ part 'todo_state.dart';
 class TodoCubit extends Cubit<TodoState> {
   final TodoRepository _todoRepository = TodoRepository();
   RealtimeChannel? _subscription;
+  String? _currentUserId;
 
   TodoCubit() : super(TodoInitial());
 
   Future<void> loadTodos(String userId) async {
+    _currentUserId = userId;
     emit(TodoLoading());
 
     try {
       final todos = await _todoRepository.getTodos(userId);
-      emit(TodoLoaded(todos));
+      _emitTodosLoaded(todos);
+
+      // Unsubscribe previous subscription if exists
+      await _subscription?.unsubscribe();
 
       // Subscribe to real-time updates
       _subscription = _todoRepository.subscribeToTodos(userId, (updatedTodos) {
-        emit(TodoLoaded(updatedTodos));
+        _emitTodosLoaded(updatedTodos);
       });
     } catch (e) {
       emit(TodoError(e.toString()));
     }
   }
 
+  // Manual refresh method
+  Future<void> refreshTodos() async {
+    if (_currentUserId == null) return;
+
+    try {
+      final todos = await _todoRepository.getTodos(_currentUserId!);
+      _emitTodosLoaded(todos);
+    } catch (e) {
+      emit(TodoError(e.toString()));
+    }
+  }
+
+  // Helper method để phân tách và emit todos
+  void _emitTodosLoaded(List<TodoEntity> todos) {
+    final pendingTodos = todos
+        .where((todo) => todo.status == TodoStatus.pending)
+        .toList();
+
+    final completedTodos = todos
+        .where((todo) => todo.status == TodoStatus.completed)
+        .toList();
+
+    // Sắp xếp todos theo thời gian
+    pendingTodos.sort((a, b) {
+      if (a.time != null && b.time != null) {
+        return a.time!.compareTo(b.time!);
+      } else if (a.time != null) {
+        return -1;
+      } else if (b.time != null) {
+        return 1;
+      } else {
+        return a.date.compareTo(b.date);
+      }
+    });
+
+    completedTodos.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
+    emit(
+      TodoLoaded(pendingTodos: pendingTodos, completedTodos: completedTodos),
+    );
+  }
+
   Future<void> createTodo(CreateTodoParams params) async {
     try {
       await _todoRepository.createTodo(params);
-      // The real-time subscription will automatically update the state
+
+      // Manual refresh để đảm bảo UI được update
+      await refreshTodos();
     } catch (e) {
       emit(TodoError(e.toString()));
     }
@@ -43,27 +92,55 @@ class TodoCubit extends Cubit<TodoState> {
   Future<void> updateTodo(String todoId, UpdateTodoParams params) async {
     try {
       await _todoRepository.updateTodo(todoId, params);
-      // The real-time subscription will automatically update the state
+
+      // Manual refresh để đảm bảo UI được update
+      await refreshTodos();
     } catch (e) {
       emit(TodoError(e.toString()));
     }
   }
 
   Future<void> toggleTodoStatus(TodoEntity todo) async {
-    final newStatus = todo.status == TodoStatus.pending
-        ? TodoStatus.completed
-        : TodoStatus.pending;
+    try {
+      final newStatus = todo.status == TodoStatus.pending
+          ? TodoStatus.completed
+          : TodoStatus.pending;
 
-    await updateTodo(todo.id, UpdateTodoParams(status: newStatus));
+      await updateTodo(todo.id, UpdateTodoParams(status: newStatus));
+    } catch (e) {
+      emit(TodoError(e.toString()));
+    }
   }
 
   Future<void> deleteTodo(String todoId) async {
     try {
       await _todoRepository.deleteTodo(todoId);
-      // The real-time subscription will automatically update the state
+
+      // Manual refresh để đảm bảo UI được update
+      await refreshTodos();
     } catch (e) {
       emit(TodoError(e.toString()));
     }
+  }
+
+  // Method để lấy todos theo status
+  List<TodoEntity> getTodosByStatus(TodoStatus status) {
+    final currentState = state;
+    if (currentState is TodoLoaded) {
+      return status == TodoStatus.pending
+          ? currentState.pendingTodos
+          : currentState.completedTodos;
+    }
+    return [];
+  }
+
+  // Method để lấy tất cả todos
+  List<TodoEntity> getAllTodos() {
+    final currentState = state;
+    if (currentState is TodoLoaded) {
+      return currentState.allTodos;
+    }
+    return [];
   }
 
   @override

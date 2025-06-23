@@ -27,6 +27,7 @@ class _AddTodoViewState extends State<AddTodoView> {
   DateTime _selectedDate = DateTime.now();
   TimeOfDay? _selectedTime;
   TodoCategory _selectedCategory = TodoCategory.personal;
+  bool _isLoading = false;
 
   bool get isEditing => widget.todo != null;
 
@@ -52,11 +53,23 @@ class _AddTodoViewState extends State<AddTodoView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Column(
+      body: Stack(
         children: [
-          _buildHeader(),
-          Expanded(child: _buildForm()),
-          _buildSaveButton(),
+          Column(
+            children: [
+              _buildHeader(),
+              Expanded(child: _buildForm()),
+              _buildSaveButton(),
+            ],
+          ),
+          // Loading Overlay
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.3),
+              child: const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
+            ),
         ],
       ),
     );
@@ -89,7 +102,9 @@ class _AddTodoViewState extends State<AddTodoView> {
                 shape: BoxShape.circle,
               ),
               child: IconButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: _isLoading
+                    ? null
+                    : () => Navigator.pop(context, false),
                 icon: Icon(Icons.close, color: AppColors.primary, size: 20),
                 padding: EdgeInsets.zero,
               ),
@@ -139,6 +154,7 @@ class _AddTodoViewState extends State<AddTodoView> {
               clipBehavior: Clip.hardEdge,
               child: TextFormField(
                 controller: _titleController,
+                enabled: !_isLoading,
                 decoration: const InputDecoration(
                   hintText: 'Task Title',
                   hintStyle: TextStyle(color: Colors.grey, fontFamily: 'Inter'),
@@ -163,11 +179,14 @@ class _AddTodoViewState extends State<AddTodoView> {
             // Category Selector
             CategorySelectorWidget(
               selectedCategory: _selectedCategory,
-              onCategorySelected: (category) {
-                setState(() {
-                  _selectedCategory = category;
-                });
-              },
+              onCategorySelected: _isLoading
+                  ? null
+                  : (category) {
+                      setState(() {
+                        _selectedCategory = category;
+                      });
+                    },
+              isEnabled: !_isLoading,
             ),
 
             const SizedBox(height: 24),
@@ -184,7 +203,9 @@ class _AddTodoViewState extends State<AddTodoView> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: _isLoading
+                              ? Colors.grey[400]
+                              : AppColors.textPrimary,
                           fontFamily: 'Inter',
                         ),
                       ),
@@ -199,7 +220,7 @@ class _AddTodoViewState extends State<AddTodoView> {
                           ),
                         ),
                         child: InkWell(
-                          onTap: _selectDate,
+                          onTap: _isLoading ? null : _selectDate,
                           borderRadius: BorderRadius.circular(12),
                           child: Container(
                             padding: const EdgeInsets.all(16),
@@ -207,8 +228,10 @@ class _AddTodoViewState extends State<AddTodoView> {
                               children: [
                                 Text(
                                   AppDateUtils.formatDate(_selectedDate),
-                                  style: const TextStyle(
-                                    color: Colors.grey,
+                                  style: TextStyle(
+                                    color: _isLoading
+                                        ? Colors.grey[400]
+                                        : Colors.grey,
                                     fontSize: 16,
                                   ),
                                 ),
@@ -216,7 +239,9 @@ class _AddTodoViewState extends State<AddTodoView> {
                                 Icon(
                                   Icons.calendar_today,
                                   size: 20,
-                                  color: AppColors.secondary,
+                                  color: _isLoading
+                                      ? Colors.grey[400]
+                                      : AppColors.secondary,
                                 ),
                               ],
                             ),
@@ -236,7 +261,9 @@ class _AddTodoViewState extends State<AddTodoView> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: _isLoading
+                              ? Colors.grey[400]
+                              : AppColors.textPrimary,
                           fontFamily: 'Inter',
                         ),
                       ),
@@ -251,7 +278,7 @@ class _AddTodoViewState extends State<AddTodoView> {
                           ),
                         ),
                         child: InkWell(
-                          onTap: _selectTime,
+                          onTap: _isLoading ? null : _selectTime,
                           borderRadius: BorderRadius.circular(12),
                           child: Container(
                             padding: const EdgeInsets.all(16),
@@ -259,8 +286,10 @@ class _AddTodoViewState extends State<AddTodoView> {
                               children: [
                                 Text(
                                   _selectedTime?.format(context) ?? 'Time',
-                                  style: const TextStyle(
-                                    color: Colors.grey,
+                                  style: TextStyle(
+                                    color: _isLoading
+                                        ? Colors.grey[400]
+                                        : Colors.grey,
                                     fontSize: 16,
                                   ),
                                 ),
@@ -268,7 +297,9 @@ class _AddTodoViewState extends State<AddTodoView> {
                                 Icon(
                                   Icons.access_time,
                                   size: 20,
-                                  color: AppColors.secondary,
+                                  color: _isLoading
+                                      ? Colors.grey[400]
+                                      : AppColors.secondary,
                                 ),
                               ],
                             ),
@@ -289,7 +320,7 @@ class _AddTodoViewState extends State<AddTodoView> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: _isLoading ? Colors.grey[400] : AppColors.textPrimary,
                 fontFamily: 'Inter',
               ),
             ),
@@ -304,6 +335,7 @@ class _AddTodoViewState extends State<AddTodoView> {
               clipBehavior: Clip.hardEdge,
               child: TextFormField(
                 controller: _notesController,
+                enabled: !_isLoading,
                 maxLines: null,
                 expands: true,
                 textAlignVertical: TextAlignVertical.top,
@@ -340,26 +372,38 @@ class _AddTodoViewState extends State<AddTodoView> {
         width: double.infinity,
         height: 50,
         decoration: BoxDecoration(
-          color: AppColors.secondary,
+          color: _isLoading ? Colors.grey[400] : AppColors.secondary,
           borderRadius: BorderRadius.circular(36),
         ),
         child: ElevatedButton(
-          onPressed: _saveTodo,
+          onPressed: _isLoading ? null : _saveTodo,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.secondary,
+            backgroundColor: _isLoading
+                ? Colors.grey[400]
+                : AppColors.secondary,
             shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(36),
             ),
+            disabledBackgroundColor: Colors.grey[400],
           ),
-          child: Text(
-            isEditing ? 'Update' : 'Save',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          child: _isLoading
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                )
+              : Text(
+                  isEditing ? 'Update' : 'Save',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
         ),
       ),
     );
@@ -393,50 +437,93 @@ class _AddTodoViewState extends State<AddTodoView> {
     }
   }
 
-  void _saveTodo() {
+  Future<void> _saveTodo() async {
     if (!_formKey.currentState!.validate()) return;
 
     final authState = context.read<AuthCubit>().state;
     if (authState is! AuthAuthenticated) return;
 
-    final DateTime? dateTime = _selectedTime != null
-        ? DateTime(
-            _selectedDate.year,
-            _selectedDate.month,
-            _selectedDate.day,
-            _selectedTime!.hour,
-            _selectedTime!.minute,
-          )
-        : null;
+    setState(() {
+      _isLoading = true;
+    });
 
-    if (isEditing) {
-      final params = UpdateTodoParams(
-        title: _titleController.text.trim(),
-        notes: _notesController.text.trim().isEmpty
-            ? null
-            : _notesController.text.trim(),
-        date: _selectedDate,
-        time: dateTime,
-        category: _selectedCategory,
-      );
+    try {
+      final DateTime? dateTime = _selectedTime != null
+          ? DateTime(
+              _selectedDate.year,
+              _selectedDate.month,
+              _selectedDate.day,
+              _selectedTime!.hour,
+              _selectedTime!.minute,
+            )
+          : null;
 
-      context.read<TodoCubit>().updateTodo(widget.todo!.id, params);
-    } else {
-      final params = CreateTodoParams(
-        title: _titleController.text.trim(),
-        notes: _notesController.text.trim().isEmpty
-            ? null
-            : _notesController.text.trim(),
-        date: _selectedDate,
-        time: dateTime,
-        category: _selectedCategory,
-        userId: authState.user.id,
-      );
+      if (isEditing) {
+        final params = UpdateTodoParams(
+          title: _titleController.text.trim(),
+          notes: _notesController.text.trim().isEmpty
+              ? null
+              : _notesController.text.trim(),
+          date: _selectedDate,
+          time: dateTime,
+          category: _selectedCategory,
+        );
 
-      context.read<TodoCubit>().createTodo(params);
+        await context.read<TodoCubit>().updateTodo(widget.todo!.id, params);
+      } else {
+        final params = CreateTodoParams(
+          title: _titleController.text.trim(),
+          notes: _notesController.text.trim().isEmpty
+              ? null
+              : _notesController.text.trim(),
+          date: _selectedDate,
+          time: dateTime,
+          category: _selectedCategory,
+          userId: authState.user.id,
+        );
+
+        await context.read<TodoCubit>().createTodo(params);
+      }
+
+      if (mounted) {
+        _showSuccessMessage(
+          isEditing
+              ? 'Task updated successfully!'
+              : 'Task created successfully!',
+        );
+        // Return true để báo có thay đổi
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        _showErrorMessage(
+          'Failed to ${isEditing ? 'update' : 'create'} task. Please try again.',
+        );
+      }
     }
+  }
 
-    Navigator.pop(context);
+  void _showSuccessMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override

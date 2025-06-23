@@ -102,6 +102,17 @@ class _HomeViewBody extends StatelessWidget {
                 Text(
                   'Error: ${state.message}',
                   style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    final authState = context.read<AuthCubit>().state;
+                    if (authState is AuthAuthenticated) {
+                      context.read<TodoCubit>().loadTodos(authState.user.id);
+                    }
+                  },
+                  child: const Text('Retry'),
                 ),
               ],
             ),
@@ -112,56 +123,132 @@ class _HomeViewBody extends StatelessWidget {
           final pendingTodos = state.pendingTodos;
           final completedTodos = state.completedTodos;
 
-          return ListView(
-            padding: const EdgeInsets.all(24),
-            children: [
-              // Pending Todos
-              ...pendingTodos.map(
-                (todo) => TodoItemWidget(
-                  todo: todo,
-                  onToggle: () =>
-                      context.read<TodoCubit>().toggleTodoStatus(todo),
-                  onEdit: () => _showEditTodoModal(context, todo),
-                  onDelete: () => context.read<TodoCubit>().deleteTodo(todo.id),
-                ),
+          if (pendingTodos.isEmpty && completedTodos.isEmpty) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                await context.read<TodoCubit>().refreshTodos();
+              },
+              child: ListView(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.task_alt,
+                            size: 64,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No todos yet',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Tap the + button to add your first todo',
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
+            );
+          }
 
-              // Completed Section
-              if (completedTodos.isNotEmpty) ...[
-                const SizedBox(height: 24),
-                Text(
-                  'Completed',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textSecondary,
+          return RefreshIndicator(
+            onRefresh: () async {
+              await context.read<TodoCubit>().refreshTodos();
+            },
+            child: ListView(
+              padding: const EdgeInsets.all(24),
+              children: [
+                // Pending Todos Section
+                if (pendingTodos.isNotEmpty) ...[
+                  _buildSectionHeader('Today\'s Tasks', pendingTodos.length),
+                  const SizedBox(height: 16),
+                  ...pendingTodos.map(
+                    (todo) => TodoItemWidget(
+                      todo: todo,
+                      onToggle: () =>
+                          context.read<TodoCubit>().toggleTodoStatus(todo),
+                      onEdit: () => _showEditTodoModal(context, todo),
+                      onDelete: () => _showDeleteConfirmation(context, todo),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                ...completedTodos.map(
-                  (todo) => TodoItemWidget(
-                    todo: todo,
-                    onToggle: () =>
-                        context.read<TodoCubit>().toggleTodoStatus(todo),
-                    onEdit: () => _showEditTodoModal(context, todo),
-                    onDelete: () =>
-                        context.read<TodoCubit>().deleteTodo(todo.id),
+                ],
+
+                // Completed Section
+                if (completedTodos.isNotEmpty) ...[
+                  if (pendingTodos.isNotEmpty) const SizedBox(height: 32),
+                  _buildSectionHeader('Completed', completedTodos.length),
+                  const SizedBox(height: 16),
+                  ...completedTodos.map(
+                    (todo) => TodoItemWidget(
+                      todo: todo,
+                      onToggle: () =>
+                          context.read<TodoCubit>().toggleTodoStatus(todo),
+                      onEdit: () => _showEditTodoModal(context, todo),
+                      onDelete: () => _showDeleteConfirmation(context, todo),
+                    ),
                   ),
-                ),
+                ],
+
+                const SizedBox(height: 80), // Space for FAB
               ],
-
-              const SizedBox(height: 80), // Space for FAB
-            ],
+            ),
           );
         }
 
-        return const Center(child: Text('No todos found'));
+        return const Center(child: Text('Something went wrong'));
       },
     );
   }
 
-  void _showAddTodoModal(BuildContext context) {
-    showModalBottomSheet(
+  Widget _buildSectionHeader(String title, int count) {
+    return Row(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: Colors.blue.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            count.toString(),
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.blue,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showAddTodoModal(BuildContext context) async {
+    final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -170,16 +257,50 @@ class _HomeViewBody extends StatelessWidget {
         child: const AddTodoView(),
       ),
     );
+
+    // Refresh nếu có thay đổi
+    if (result == true) {
+      context.read<TodoCubit>().refreshTodos();
+    }
   }
 
-  void _showEditTodoModal(BuildContext context, TodoEntity todo) {
-    showModalBottomSheet(
+  void _showEditTodoModal(BuildContext context, TodoEntity todo) async {
+    final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (modalContext) => BlocProvider.value(
         value: context.read<TodoCubit>(),
         child: AddTodoView(todo: todo),
+      ),
+    );
+
+    // Refresh nếu có thay đổi
+    if (result == true) {
+      context.read<TodoCubit>().refreshTodos();
+    }
+  }
+
+  void _showDeleteConfirmation(BuildContext context, TodoEntity todo) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete Todo'),
+        content: Text('Are you sure you want to delete "${todo.title}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              context.read<TodoCubit>().deleteTodo(todo.id);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
       ),
     );
   }

@@ -88,6 +88,8 @@ flutter:
     - assets/ellipse_2.png
     - assets/file-list-line.png
     - assets/trophy-line.png
+    - assets/false_checked.png
+    - assets/true_checked.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

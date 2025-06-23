@@ -4,12 +4,14 @@ import 'package:todo_app/model/enums/todo_enum.dart';
 
 class CategorySelectorWidget extends StatelessWidget {
   final TodoCategory selectedCategory;
-  final Function(TodoCategory) onCategorySelected;
+  final Function(TodoCategory)? onCategorySelected; // Made nullable
+  final bool isEnabled;
 
   const CategorySelectorWidget({
     super.key,
     required this.selectedCategory,
     required this.onCategorySelected,
+    this.isEnabled = true,
   });
 
   @override
@@ -24,7 +26,7 @@ class CategorySelectorWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: isEnabled ? AppColors.textPrimary : Colors.grey[400],
               fontFamily: 'Inter',
             ),
           ),
@@ -38,13 +40,19 @@ class CategorySelectorWidget extends StatelessWidget {
               final color = _getCategoryColor(category);
 
               return GestureDetector(
-                onTap: () => onCategorySelected(category),
+                onTap: (isEnabled && onCategorySelected != null)
+                    ? () => onCategorySelected!(category)
+                    : null,
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 6),
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: isSelected ? color : color.withOpacity(0.1),
+                    color: isSelected
+                        ? (isEnabled ? color : color.withOpacity(0.3))
+                        : (isEnabled
+                              ? color.withOpacity(0.1)
+                              : color.withOpacity(0.05)),
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: Colors.white,
@@ -52,11 +60,18 @@ class CategorySelectorWidget extends StatelessWidget {
                     ),
                   ),
                   child: Center(
-                    child: Image.asset(
-                      _getCategoryIconAsset(category),
-                      width: 20,
-                      height: 20,
-                      color: isSelected ? Colors.black : color,
+                    child: Opacity(
+                      opacity: isEnabled ? 1.0 : 0.5,
+                      child: Image.asset(
+                        _getCategoryIconAsset(category),
+                        width: 20,
+                        height: 20,
+                        color: isSelected
+                            ? (isEnabled
+                                  ? Colors.black
+                                  : Colors.black.withOpacity(0.5))
+                            : (isEnabled ? color : color.withOpacity(0.5)),
+                      ),
                     ),
                   ),
                 ),

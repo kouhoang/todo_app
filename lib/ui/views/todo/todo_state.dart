@@ -4,7 +4,7 @@ abstract class TodoState extends Equatable {
   const TodoState();
 
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [];
 }
 
 class TodoInitial extends TodoState {}
@@ -12,18 +12,15 @@ class TodoInitial extends TodoState {}
 class TodoLoading extends TodoState {}
 
 class TodoLoaded extends TodoState {
-  final List<TodoEntity> todos;
+  final List<TodoEntity> pendingTodos;
+  final List<TodoEntity> completedTodos;
 
-  const TodoLoaded(this.todos);
+  const TodoLoaded({required this.pendingTodos, required this.completedTodos});
 
-  List<TodoEntity> get pendingTodos =>
-      todos.where((todo) => todo.status == TodoStatus.pending).toList();
-
-  List<TodoEntity> get completedTodos =>
-      todos.where((todo) => todo.status == TodoStatus.completed).toList();
+  List<TodoEntity> get allTodos => [...pendingTodos, ...completedTodos];
 
   @override
-  List<Object?> get props => [todos];
+  List<Object> get props => [pendingTodos, completedTodos];
 }
 
 class TodoError extends TodoState {
@@ -32,5 +29,5 @@ class TodoError extends TodoState {
   const TodoError(this.message);
 
   @override
-  List<Object?> get props => [message];
+  List<Object> get props => [message];
 }

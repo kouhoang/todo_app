@@ -49,14 +49,23 @@ class TodoItemWidget extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: _getCategoryColor(todo.category).withOpacity(0.1),
+                  color: _getCategoryColor(
+                    todo.category,
+                  ).withOpacity(isCompleted ? 0.05 : 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Image.asset(
-                  _getCategoryIconAsset(todo.category),
-                  width: 20,
-                  height: 20,
-                  color: _getCategoryColor(todo.category),
+                child: Center(
+                  child: Opacity(
+                    opacity: isCompleted ? 0.3 : 1.0,
+                    child: Image.asset(
+                      _getCategoryIconAsset(todo.category),
+                      width: 20,
+                      height: 20,
+                      color: _getCategoryColor(
+                        todo.category,
+                      ).withOpacity(isCompleted ? 0.3 : 1.0),
+                    ),
+                  ),
                 ),
               ),
 
@@ -67,118 +76,119 @@ class TodoItemWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Title
                     Text(
                       todo.title,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: isCompleted
-                            ? AppColors.textTertiary
+                            ? AppColors.textTertiary.withOpacity(0.5)
                             : AppColors.textPrimary,
                         decoration: isCompleted
                             ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                        decorationColor: isCompleted
+                            ? AppColors.textTertiary.withOpacity(0.5)
                             : null,
+                        decorationThickness: isCompleted ? 2.0 : null,
                       ),
                     ),
 
                     const SizedBox(height: 4),
 
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            todo.time != null
-                                ? AppDateUtils.formatDateTime(todo.time!)
-                                : AppDateUtils.formatDate(todo.date),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isOverdue
-                                  ? AppColors.error
-                                  : AppColors.textSecondary,
-                              fontWeight: isOverdue ? FontWeight.w500 : null,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                    // Date/Time
+                    Text(
+                      todo.time != null
+                          ? AppDateUtils.formatDateTime(todo.time!)
+                          : AppDateUtils.formatDate(todo.date),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isCompleted
+                            ? AppColors.textSecondary.withOpacity(0.4)
+                            : isOverdue
+                            ? AppColors.error
+                            : AppColors.textSecondary,
+                        fontWeight: isOverdue && !isCompleted
+                            ? FontWeight.w500
+                            : FontWeight.normal,
+                        decoration: isCompleted
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                        decorationColor: isCompleted
+                            ? AppColors.textSecondary.withOpacity(0.4)
+                            : null,
+                        decorationThickness: isCompleted ? 1.5 : null,
+                      ),
+                    ),
+
+                    // Notes if available
+                    if (todo.notes != null && todo.notes!.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        todo.notes!,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isCompleted
+                              ? AppColors.textSecondary.withOpacity(0.3)
+                              : AppColors.textSecondary.withOpacity(0.7),
+                          decoration: isCompleted
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                          decorationColor: isCompleted
+                              ? AppColors.textSecondary.withOpacity(0.3)
+                              : null,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+
+                    // Overdue badge (only show if not completed)
+                    if (isOverdue && !isCompleted) ...[
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.error.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'Overdue',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: AppColors.error,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-
-                        if (isOverdue) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.error.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              'Overdue',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: AppColors.error,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
+                      ),
+                    ],
                   ],
                 ),
               ),
 
-              // Actions
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Complete/Uncomplete Button
-                  InkWell(
-                    onTap: onToggle,
-                    child: Container(
+              const SizedBox(width: 12),
+
+              // Checkbox - Click to toggle status
+              GestureDetector(
+                onTap: onToggle,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: Image.asset(
+                      isCompleted
+                          ? 'assets/true_checked.png'
+                          : 'assets/false_checked.png',
+                      key: ValueKey(isCompleted),
                       width: 24,
                       height: 24,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: isCompleted ? AppColors.success : Colors.grey,
-                          width: 2,
-                        ),
-                        color: isCompleted
-                            ? AppColors.success
-                            : Colors.transparent,
-                      ),
-                      child: isCompleted
-                          ? const Icon(
-                              Icons.check,
-                              size: 16,
-                              color: Colors.white,
-                            )
-                          : null,
                     ),
                   ),
-
-                  const SizedBox(width: 8),
-
-                  // Delete Button
-                  InkWell(
-                    onTap: onDelete,
-                    borderRadius: BorderRadius.circular(16),
-                    child: Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: AppColors.error.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.delete_outline,
-                        color: AppColors.error,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),
