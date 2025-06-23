@@ -33,51 +33,69 @@ class _HomeViewBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.background,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
-                ),
-                child: _buildTodoList(),
-              ),
+      backgroundColor: AppColors.secondary,
+      body: Column(
+        children: [
+          // Header
+          Expanded(flex: 1, child: _buildHeader()),
+          // Content area
+          Expanded(
+            flex: 3,
+            child: Container(
+              decoration: BoxDecoration(color: AppColors.background),
+              child: _buildTodoList(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddTodoModal(context),
-        backgroundColor: AppColors.primary,
+        onPressed: () => _showAddTodoModel(context),
+        backgroundColor: AppColors.secondary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildHeader() {
+    return SizedBox(
+      width: double.infinity,
+      child: Stack(
         children: [
-          Text(
-            AppDateUtils.formatDate(DateTime.now()),
-            style: const TextStyle(color: Colors.white70, fontSize: 16),
+          // Ellipse images
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Image.asset('assets/ellipse_2.png', fit: BoxFit.cover),
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'My Todo List',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: Image.asset('assets/ellipse_1.png', fit: BoxFit.cover),
+          ),
+
+          // Content
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    AppDateUtils.formatDate(DateTime.now()),
+                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'My Todo List',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -171,42 +189,17 @@ class _HomeViewBody extends StatelessWidget {
             onRefresh: () async {
               await context.read<TodoCubit>().refreshTodos();
             },
-            child: ListView(
+            child: ListView.builder(
               padding: const EdgeInsets.all(24),
-              children: [
-                // Pending Todos Section
-                if (pendingTodos.isNotEmpty) ...[
-                  _buildSectionHeader('Today\'s Tasks', pendingTodos.length),
-                  const SizedBox(height: 16),
-                  ...pendingTodos.map(
-                    (todo) => TodoItemWidget(
-                      todo: todo,
-                      onToggle: () =>
-                          context.read<TodoCubit>().toggleTodoStatus(todo),
-                      onEdit: () => _showEditTodoModal(context, todo),
-                      onDelete: () => _showDeleteConfirmation(context, todo),
-                    ),
-                  ),
-                ],
-
-                // Completed Section
-                if (completedTodos.isNotEmpty) ...[
-                  if (pendingTodos.isNotEmpty) const SizedBox(height: 32),
-                  _buildSectionHeader('Completed', completedTodos.length),
-                  const SizedBox(height: 16),
-                  ...completedTodos.map(
-                    (todo) => TodoItemWidget(
-                      todo: todo,
-                      onToggle: () =>
-                          context.read<TodoCubit>().toggleTodoStatus(todo),
-                      onEdit: () => _showEditTodoModal(context, todo),
-                      onDelete: () => _showDeleteConfirmation(context, todo),
-                    ),
-                  ),
-                ],
-
-                const SizedBox(height: 80), // Space for FAB
-              ],
+              itemCount: _getTotalItemCount(pendingTodos, completedTodos),
+              itemBuilder: (context, index) {
+                return _buildListItem(
+                  context,
+                  index,
+                  pendingTodos,
+                  completedTodos,
+                );
+              },
             ),
           );
         }
@@ -214,6 +207,100 @@ class _HomeViewBody extends StatelessWidget {
         return const Center(child: Text('Something went wrong'));
       },
     );
+  }
+
+  int _getTotalItemCount(
+    List<TodoEntity> pendingTodos,
+    List<TodoEntity> completedTodos,
+  ) {
+    int count = 0;
+
+    if (pendingTodos.isNotEmpty) {
+      count += 1; // Header
+      count += pendingTodos.length; // Todos
+    }
+
+    if (completedTodos.isNotEmpty) {
+      count += 1; // Spacing
+      count += 1; // Header
+      count += completedTodos.length; // Todos
+    }
+
+    count += 1; // Bottom spacing
+    return count;
+  }
+
+  Widget _buildListItem(
+    BuildContext context,
+    int index,
+    List<TodoEntity> pendingTodos,
+    List<TodoEntity> completedTodos,
+  ) {
+    int currentIndex = 0;
+
+    // Pending todos section
+    if (pendingTodos.isNotEmpty) {
+      if (index == currentIndex) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: _buildSectionHeader('Today\'s Tasks', pendingTodos.length),
+        );
+      }
+      currentIndex++;
+
+      if (index < currentIndex + pendingTodos.length) {
+        final todoIndex = index - currentIndex;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12), // Spacing between items
+          child: TodoItemWidget(
+            todo: pendingTodos[todoIndex],
+            onToggle: () => context.read<TodoCubit>().toggleTodoStatus(
+              pendingTodos[todoIndex],
+            ),
+            onEdit: () => _showEditTodoModel(context, pendingTodos[todoIndex]),
+            onDelete: () =>
+                _showDeleteConfirmation(context, pendingTodos[todoIndex]),
+          ),
+        );
+      }
+      currentIndex += pendingTodos.length;
+    }
+
+    // Completed todos section
+    if (completedTodos.isNotEmpty) {
+      if (pendingTodos.isNotEmpty && index == currentIndex) {
+        return const SizedBox(height: 32); // Spacing between sections
+      }
+      if (pendingTodos.isNotEmpty) currentIndex++;
+
+      if (index == currentIndex) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: _buildSectionHeader('Completed', completedTodos.length),
+        );
+      }
+      currentIndex++;
+
+      if (index < currentIndex + completedTodos.length) {
+        final todoIndex = index - currentIndex;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12), // Spacing between items
+          child: TodoItemWidget(
+            todo: completedTodos[todoIndex],
+            onToggle: () => context.read<TodoCubit>().toggleTodoStatus(
+              completedTodos[todoIndex],
+            ),
+            onEdit: () =>
+                _showEditTodoModel(context, completedTodos[todoIndex]),
+            onDelete: () =>
+                _showDeleteConfirmation(context, completedTodos[todoIndex]),
+          ),
+        );
+      }
+    }
+
+    // Bottom spacing for FAB
+    return const SizedBox(height: 80);
   }
 
   Widget _buildSectionHeader(String title, int count) {
@@ -247,7 +334,7 @@ class _HomeViewBody extends StatelessWidget {
     );
   }
 
-  void _showAddTodoModal(BuildContext context) async {
+  void _showAddTodoModel(BuildContext context) async {
     final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -264,7 +351,7 @@ class _HomeViewBody extends StatelessWidget {
     }
   }
 
-  void _showEditTodoModal(BuildContext context, TodoEntity todo) async {
+  void _showEditTodoModel(BuildContext context, TodoEntity todo) async {
     final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -275,7 +362,7 @@ class _HomeViewBody extends StatelessWidget {
       ),
     );
 
-    // Refresh nếu có thay đổi
+    // Refresh if having changed
     if (result == true) {
       context.read<TodoCubit>().refreshTodos();
     }

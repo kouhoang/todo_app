@@ -48,7 +48,7 @@ class TodoCubit extends Cubit<TodoState> {
     }
   }
 
-  // Helper method để phân tách và emit todos
+  // Helper method to parse and emit todos
   void _emitTodosLoaded(List<TodoEntity> todos) {
     final pendingTodos = todos
         .where((todo) => todo.status == TodoStatus.pending)
@@ -58,7 +58,7 @@ class TodoCubit extends Cubit<TodoState> {
         .where((todo) => todo.status == TodoStatus.completed)
         .toList();
 
-    // Sắp xếp todos theo thời gian
+    // Organize todos by time
     pendingTodos.sort((a, b) {
       if (a.time != null && b.time != null) {
         return a.time!.compareTo(b.time!);
@@ -82,7 +82,7 @@ class TodoCubit extends Cubit<TodoState> {
     try {
       await _todoRepository.createTodo(params);
 
-      // Manual refresh để đảm bảo UI được update
+      // Manual refresh to ensure UI is updated
       await refreshTodos();
     } catch (e) {
       emit(TodoError(e.toString()));
@@ -93,7 +93,7 @@ class TodoCubit extends Cubit<TodoState> {
     try {
       await _todoRepository.updateTodo(todoId, params);
 
-      // Manual refresh để đảm bảo UI được update
+      // Manual refresh to ensure UI is updated
       await refreshTodos();
     } catch (e) {
       emit(TodoError(e.toString()));
@@ -123,7 +123,7 @@ class TodoCubit extends Cubit<TodoState> {
     }
   }
 
-  // Method để lấy todos theo status
+  // Method to get todos by status
   List<TodoEntity> getTodosByStatus(TodoStatus status) {
     final currentState = state;
     if (currentState is TodoLoaded) {
@@ -134,7 +134,7 @@ class TodoCubit extends Cubit<TodoState> {
     return [];
   }
 
-  // Method để lấy tất cả todos
+  // Method to get all todos by status
   List<TodoEntity> getAllTodos() {
     final currentState = state;
     if (currentState is TodoLoaded) {

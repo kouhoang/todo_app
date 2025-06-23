@@ -25,7 +25,6 @@ class TodoItemWidget extends StatelessWidget {
     final isOverdue = !isCompleted && AppDateUtils.isOverdue(todo.date);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),

@@ -112,16 +112,7 @@ class SupabaseService {
             column: 'user_id',
             value: userId,
           ),
-          callback: (payload) async {
-            print('Real-time update received: ${payload.eventType}');
-            try {
-              // Refresh todos when changes occur
-              final todos = await getTodos(userId);
-              onUpdate(todos);
-            } catch (e) {
-              print('Error in real-time callback: $e');
-            }
-          },
+          callback: (payload) async {},
         )
         .subscribe();
   }

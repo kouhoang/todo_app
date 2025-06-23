@@ -491,7 +491,7 @@ class _AddTodoViewState extends State<AddTodoView> {
               ? 'Task updated successfully!'
               : 'Task created successfully!',
         );
-        // Return true để báo có thay đổi
+        // Return true to notify if having changed
         Navigator.pop(context, true);
       }
     } catch (e) {
