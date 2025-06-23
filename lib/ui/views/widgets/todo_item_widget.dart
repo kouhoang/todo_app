@@ -180,8 +180,8 @@ class TodoItemWidget extends StatelessWidget {
                     duration: const Duration(milliseconds: 300),
                     child: Image.asset(
                       isCompleted
-                          ? 'assets/true_checked.png'
-                          : 'assets/false_checked.png',
+                          ? 'assets/false_checked.png'
+                          : 'assets/true_checked.png',
                       key: ValueKey(isCompleted),
                       width: 24,
                       height: 24,

@@ -83,7 +83,12 @@ class _HomeViewBody extends StatelessWidget {
                 children: [
                   Text(
                     AppDateUtils.formatDate(DateTime.now()),
-                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   const Text(
