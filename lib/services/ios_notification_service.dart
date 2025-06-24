@@ -53,9 +53,8 @@ class NotificationService {
       await _requestPermissions();
 
       _isInitialized = true;
-      debugPrint('✅ NotificationService initialized successfully');
     } catch (e) {
-      debugPrint('❌ Failed to initialize NotificationService: $e');
+      // Handle initialization error silently
     }
   }
 
@@ -84,20 +83,16 @@ class NotificationService {
   void _onDidReceiveNotificationResponse(NotificationResponse response) async {
     final String? payload = response.payload;
     if (payload != null) {
-      debugPrint('Notification payload: $payload');
       await _handleNotificationTap(payload);
     }
   }
 
   Future<void> _handleNotificationTap(String todoId) async {
-    debugPrint('Handle notification tap for todo: $todoId');
+    // Handle notification tap logic here
   }
 
   Future<void> scheduleTodoNotification(TodoEntity todo) async {
-    if (!_isInitialized) {
-      debugPrint('⚠️ NotificationService not initialized');
-      return;
-    }
+    if (!_isInitialized) return;
 
     if (todo.time == null) return;
 
@@ -112,9 +107,6 @@ class NotificationService {
 
     // Don't schedule if time has passed
     if (notificationTime.isBefore(DateTime.now())) {
-      debugPrint(
-        '⚠️ Cannot schedule notification for past time: $notificationTime',
-      );
       return;
     }
 
@@ -163,12 +155,8 @@ class NotificationService {
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: todo.id,
       );
-
-      debugPrint(
-        '✅ Scheduled notification for "${todo.title}" at $notificationTime',
-      );
     } catch (e) {
-      debugPrint('❌ Failed to schedule notification: $e');
+      // Handle scheduling error silently
     }
   }
 
@@ -177,9 +165,8 @@ class NotificationService {
 
     try {
       await _flutterLocalNotificationsPlugin.cancel(todoId.hashCode);
-      debugPrint('🚫 Cancelled notification for todo: $todoId');
     } catch (e) {
-      debugPrint('❌ Failed to cancel notification: $e');
+      // Handle cancellation error silently
     }
   }
 
@@ -193,9 +180,7 @@ class NotificationService {
 
   // Test notification method
   Future<void> showTestNotification() async {
-    if (!_isInitialized) {
-      return;
-    }
+    if (!_isInitialized) return;
 
     AndroidNotificationDetails? androidDetails;
     DarwinNotificationDetails? iosDetails;
@@ -231,7 +216,7 @@ class NotificationService {
         notificationDetails,
       );
     } catch (e) {
-      // Handle error silently or add proper error handling
+      // Handle error silently
     }
   }
 
@@ -243,7 +228,6 @@ class NotificationService {
   Future<void> cancelAllNotifications() async {
     if (!_isInitialized) return;
     await _flutterLocalNotificationsPlugin.cancelAll();
-    debugPrint('🧹 All notifications cancelled');
   }
 
   // Check if notifications are enabled
@@ -264,6 +248,6 @@ class NotificationService {
       }
     }
 
-    return true; // Android typically allows notifications by default
+    return true;
   }
 }
