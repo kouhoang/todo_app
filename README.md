@@ -33,7 +33,7 @@
 </p>
 
 <p align="center">
-  <img src="images/iamge1.png" style="width: 25%;" alt="Image">
+  <img src="images/image1.png" style="width: 25%;" alt="Image">
 </p>
 
 <p align="center">
