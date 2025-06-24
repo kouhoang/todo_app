@@ -5,7 +5,7 @@
 ## ✨ Tính năng chính
 
 - **📋 Quản lý Todo**: Tạo, sửa, xóa và đánh dấu hoàn thành công việc
-- **🔔 Thông báo báo thức**: Nhắc nhở với âm thanh tùy chỉnh khi đến giờ
+- **🔔 Thông báo báo thức**: Nhắc nhở bằng thông báo khi đến giờ
 - **📅 Lịch trình linh hoạt**: Đặt ngày và giờ cho từng công việc (tùy chọn)
 - **🏷️ Phân loại**: Organizer công việc theo danh mục (List, Calendar, Trophy)
 - **👆 Swipe để xóa**: Vuốt sang trái để xóa công việc nhanh chóng
