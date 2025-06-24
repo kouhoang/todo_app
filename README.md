@@ -1,16 +1,50 @@
-# todo_app
+# 📝 Todo App
 
-A new Flutter project.
+Ứng dụng quản lý công việc (Todo) được xây dựng bằng Flutter với hệ thống thông báo báo thức và đồng bộ dữ liệu thời gian thực.
 
-## Getting Started
+## ✨ Tính năng chính
 
-This project is a starting point for a Flutter application.
+- **📋 Quản lý Todo**: Tạo, sửa, xóa và đánh dấu hoàn thành công việc
+- **🔔 Thông báo báo thức**: Nhắc nhở với âm thanh tùy chỉnh khi đến giờ
+- **📅 Lịch trình linh hoạt**: Đặt ngày và giờ cho từng công việc (tùy chọn)
+- **🏷️ Phân loại**: Organizer công việc theo danh mục (List, Calendar, Trophy)
+- **👆 Swipe để xóa**: Vuốt sang trái để xóa công việc nhanh chóng
+- **☁️ Đồng bộ thời gian thực**: Dữ liệu được lưu trữ và đồng bộ qua Supabase
+- **🔐 Định danh thiết bị**: Mỗi thiết bị có ID duy nhất, tồn tại qua các lần cài đặt
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Công nghệ sử dụng
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Frontend**: Flutter (Dart)
+- **Backend**: Supabase (PostgreSQL + Real-time)
+- **State Management**: Flutter Bloc + Cubit
+- **Local Storage**: Flutter Secure Storage (iOS Keychain)
+- **Notifications**: Flutter Local Notifications
+- **Navigation**: Go Router
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📱 Hỗ trợ nền tảng
+
+- ✅ iOS (14.0+)
+- 🔄 Android (đang phát triển)
+
+## Minh hoạ
+
+<p align="center">
+  <img src="images/todo_app.gif" style="width: 25%;" alt="Image">
+</p>
+
+<p align="center">
+  <img src="images/iamge1.png" style="width: 25%;" alt="Image">
+</p>
+
+<p align="center">
+  <img src="images/image2.png" style="width: 25%;" alt="Image">
+</p>
+
+<p align="center">
+  <img src="images/image3.png" style="width: 25%;" alt="Image">
+</p>
+
+### Yêu cầu
+- Flutter SDK (3.0.0+)
+- Xcode (cho iOS)
+- Supabase account
