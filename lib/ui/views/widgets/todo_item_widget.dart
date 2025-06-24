@@ -51,7 +51,7 @@ class TodoItemWidget extends StatelessWidget {
                   color: _getCategoryColor(
                     todo.category,
                   ).withAlpha(isCompleted ? 13 : 26),
-                  borderRadius: BorderRadius.circular(8),
+                  shape: BoxShape.circle,
                 ),
                 child: Center(
                   child: Opacity(

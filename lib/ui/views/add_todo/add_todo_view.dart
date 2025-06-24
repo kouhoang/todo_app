@@ -201,7 +201,7 @@ class _AddTodoViewState extends State<AddTodoView> {
                       Text(
                         'Date',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: _isLoading
                               ? Colors.grey[400]
@@ -235,7 +235,7 @@ class _AddTodoViewState extends State<AddTodoView> {
                                     fontSize: 16,
                                   ),
                                 ),
-                                const SizedBox(width: 12),
+                                const Spacer(),
                                 Icon(
                                   Icons.calendar_today,
                                   size: 20,

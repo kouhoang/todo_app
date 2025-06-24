@@ -10,18 +10,18 @@ class AppConfig {
   static String get supabaseUrl {
     switch (_environment) {
       case Environment.dev:
-        return 'https://wmfswgcrudvdqcgcnbxf.supabase.co';
+        return 'https://hvnoyunycjynvhiapkzs.supabase.co';
       case Environment.prod:
-        return 'https://wmfswgcrudvdqcgcnbxf.supabase.co';
+        return 'https://hvnoyunycjynvhiapkzs.supabase.co';
     }
   }
 
   static String get supabaseAnonKey {
     switch (_environment) {
       case Environment.dev:
-        return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtZnN3Z2NydWR2ZHFjZ2NuYnhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA0MTMzMzcsImV4cCI6MjA2NTk4OTMzN30.qnXLhP_Is-88aChJns67muMjhShCYQ-Qp2MPf2Iv9g8';
+        return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2bm95dW55Y2p5bnZoaWFwa3pzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA3MzYxNzEsImV4cCI6MjA2NjMxMjE3MX0.8K2PiON7Xm3onbNzdzuc6dRdups57kFdVNrBaPlfsoo';
       case Environment.prod:
-        return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtZnN3Z2NydWR2ZHFjZ2NuYnhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA0MTMzMzcsImV4cCI6MjA2NTk4OTMzN30.qnXLhP_Is-88aChJns67muMjhShCYQ-Qp2MPf2Iv9g8';
+        return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2bm95dW55Y2p5bnZoaWFwa3pzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA3MzYxNzEsImV4cCI6MjA2NjMxMjE3MX0.8K2PiON7Xm3onbNzdzuc6dRdups57kFdVNrBaPlfsoo';
     }
   }
 

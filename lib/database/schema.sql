@@ -13,7 +13,7 @@ CREATE TABLE todos (
   notes TEXT,
   date DATE NOT NULL,
   time TIMESTAMP WITH TIME ZONE,
-  category TEXT NOT NULL CHECK (category IN ('work', 'personal', 'important')),
+  category TEXT NOT NULL CHECK (category IN ('list', 'calendar', 'trophy')),
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed')),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
