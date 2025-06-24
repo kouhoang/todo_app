@@ -4,6 +4,7 @@ import 'package:todo_app/common/app_colors.dart';
 import 'package:todo_app/global/auth/auth_cubit.dart';
 import 'package:todo_app/ui/views/todo/todo_cubit.dart';
 import 'package:todo_app/model/entities/todo_entity.dart';
+import 'package:todo_app/model/enums/item_position.dart';
 import 'package:todo_app/ui/views/widgets/todo_item_widget.dart';
 import '../../../utils/date_utils.dart';
 import '../add_todo/add_todo_view.dart';
@@ -194,17 +195,30 @@ class _HomeViewBody extends StatelessWidget {
             onRefresh: () async {
               await context.read<TodoCubit>().refreshTodos();
             },
-            child: ListView.builder(
+            child: ListView(
               padding: const EdgeInsets.all(24),
-              itemCount: _getTotalItemCount(pendingTodos, completedTodos),
-              itemBuilder: (context, index) {
-                return _buildListItem(
-                  context,
-                  index,
-                  pendingTodos,
-                  completedTodos,
-                );
-              },
+              children: [
+                // Pending todos section
+                if (pendingTodos.isNotEmpty) ...[
+                  _buildSectionHeader('Today\'s Tasks', pendingTodos.length),
+                  const SizedBox(height: 16),
+                  _buildTodoGroup(context, pendingTodos, false),
+                ],
+
+                // Spacing between sections
+                if (pendingTodos.isNotEmpty && completedTodos.isNotEmpty)
+                  const SizedBox(height: 32),
+
+                // Completed todos section
+                if (completedTodos.isNotEmpty) ...[
+                  _buildSectionHeader('Completed', completedTodos.length),
+                  const SizedBox(height: 16),
+                  _buildTodoGroup(context, completedTodos, true),
+                ],
+
+                // Bottom spacing for FAB
+                const SizedBox(height: 80),
+              ],
             ),
           );
         }
@@ -214,98 +228,48 @@ class _HomeViewBody extends StatelessWidget {
     );
   }
 
-  int _getTotalItemCount(
-    List<TodoEntity> pendingTodos,
-    List<TodoEntity> completedTodos,
-  ) {
-    int count = 0;
-
-    if (pendingTodos.isNotEmpty) {
-      count += 1; // Header
-      count += pendingTodos.length; // Todos
-    }
-
-    if (completedTodos.isNotEmpty) {
-      count += 1; // Spacing
-      count += 1; // Header
-      count += completedTodos.length; // Todos
-    }
-
-    count += 1; // Bottom spacing
-    return count;
-  }
-
-  Widget _buildListItem(
+  Widget _buildTodoGroup(
     BuildContext context,
-    int index,
-    List<TodoEntity> pendingTodos,
-    List<TodoEntity> completedTodos,
+    List<TodoEntity> todos,
+    bool isCompleted,
   ) {
-    int currentIndex = 0;
-
-    // Pending todos section
-    if (pendingTodos.isNotEmpty) {
-      if (index == currentIndex) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: _buildSectionHeader('Today\'s Tasks', pendingTodos.length),
-        );
-      }
-      currentIndex++;
-
-      if (index < currentIndex + pendingTodos.length) {
-        final todoIndex = index - currentIndex;
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12), // Spacing between items
-          child: TodoItemWidget(
-            todo: pendingTodos[todoIndex],
-            onToggle: () => context.read<TodoCubit>().toggleTodoStatus(
-              pendingTodos[todoIndex],
-            ),
-            onEdit: () => _showEditTodoModel(context, pendingTodos[todoIndex]),
-            onDelete: () =>
-                _showDeleteConfirmation(context, pendingTodos[todoIndex]),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        );
-      }
-      currentIndex += pendingTodos.length;
-    }
+        ],
+      ),
+      child: Column(
+        children: todos.asMap().entries.map((entry) {
+          final index = entry.key;
+          final todo = entry.value;
 
-    // Completed todos section
-    if (completedTodos.isNotEmpty) {
-      if (pendingTodos.isNotEmpty && index == currentIndex) {
-        return const SizedBox(height: 32); // Spacing between sections
-      }
-      if (pendingTodos.isNotEmpty) currentIndex++;
+          ItemPosition position;
+          if (todos.length == 1) {
+            position = ItemPosition.single;
+          } else if (index == 0) {
+            position = ItemPosition.first;
+          } else if (index == todos.length - 1) {
+            position = ItemPosition.last;
+          } else {
+            position = ItemPosition.middle;
+          }
 
-      if (index == currentIndex) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: _buildSectionHeader('Completed', completedTodos.length),
-        );
-      }
-      currentIndex++;
-
-      if (index < currentIndex + completedTodos.length) {
-        final todoIndex = index - currentIndex;
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12), // Spacing between items
-          child: TodoItemWidget(
-            todo: completedTodos[todoIndex],
-            onToggle: () => context.read<TodoCubit>().toggleTodoStatus(
-              completedTodos[todoIndex],
-            ),
-            onEdit: () =>
-                _showEditTodoModel(context, completedTodos[todoIndex]),
-            onDelete: () =>
-                _showDeleteConfirmation(context, completedTodos[todoIndex]),
-          ),
-        );
-      }
-    }
-
-    // Bottom spacing for FAB
-    return const SizedBox(height: 80);
+          return TodoItemWidget(
+            todo: todo,
+            position: position,
+            onToggle: () => context.read<TodoCubit>().toggleTodoStatus(todo),
+            onEdit: () => _showEditTodoModel(context, todo),
+            onDelete: () => _showDeleteConfirmation(context, todo),
+          );
+        }).toList(),
+      ),
+    );
   }
 
   Widget _buildSectionHeader(String title, int count) {
@@ -340,7 +304,7 @@ class _HomeViewBody extends StatelessWidget {
   }
 
   void _showAddTodoModel(BuildContext context) async {
-    final todoCubit = context.read<TodoCubit>(); // Save reference before async
+    final todoCubit = context.read<TodoCubit>();
 
     final result = await showModalBottomSheet<bool>(
       context: context,
@@ -350,14 +314,13 @@ class _HomeViewBody extends StatelessWidget {
           BlocProvider.value(value: todoCubit, child: const AddTodoView()),
     );
 
-    // Refresh if having changed
     if (result == true) {
       todoCubit.refreshTodos();
     }
   }
 
   void _showEditTodoModel(BuildContext context, TodoEntity todo) async {
-    final todoCubit = context.read<TodoCubit>(); // Save reference before async
+    final todoCubit = context.read<TodoCubit>();
 
     final result = await showModalBottomSheet<bool>(
       context: context,
@@ -369,7 +332,6 @@ class _HomeViewBody extends StatelessWidget {
       ),
     );
 
-    // Refresh if having changed
     if (result == true) {
       todoCubit.refreshTodos();
     }
