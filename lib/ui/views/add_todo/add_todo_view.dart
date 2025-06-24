@@ -96,7 +96,7 @@ class _AddTodoViewState extends State<AddTodoView> {
             alignment: Alignment.centerLeft,
             child: Container(
               width: 40,
-              height: 96,
+              height: 120,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
