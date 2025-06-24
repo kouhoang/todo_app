@@ -6,7 +6,7 @@ class TodoEntity extends Equatable {
   final String id;
   final String title;
   final String? notes;
-  final DateTime date;
+  final DateTime? date;
   final DateTime? time;
   final TodoCategory category;
   final TodoStatus status;
@@ -18,7 +18,7 @@ class TodoEntity extends Equatable {
     required this.id,
     required this.title,
     this.notes,
-    required this.date,
+    this.date,
     this.time,
     required this.category,
     required this.status,
@@ -58,7 +58,7 @@ class TodoEntity extends Equatable {
       'id': id,
       'title': title,
       'notes': notes,
-      'date': date.toIso8601String(),
+      'date': date?.toIso8601String(),
       'time': time?.toIso8601String(),
       'category': category.name,
       'status': status.name,
@@ -73,7 +73,7 @@ class TodoEntity extends Equatable {
       id: map['id'] ?? '',
       title: map['title'] ?? '',
       notes: map['notes'],
-      date: DateTime.parse(map['date']),
+      date: map['date'] != null ? DateTime.parse(map['date']) : null,
       time: map['time'] != null ? DateTime.parse(map['time']) : null,
       category: TodoCategory.values.firstWhere(
         (e) => e.name == map['category'],

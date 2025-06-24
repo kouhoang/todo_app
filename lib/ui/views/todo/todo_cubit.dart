@@ -48,7 +48,6 @@ class TodoCubit extends Cubit<TodoState> {
     }
   }
 
-  // Helper method to parse and emit todos
   void _emitTodosLoaded(List<TodoEntity> todos) {
     final pendingTodos = todos
         .where((todo) => todo.status == TodoStatus.pending)
@@ -58,17 +57,28 @@ class TodoCubit extends Cubit<TodoState> {
         .where((todo) => todo.status == TodoStatus.completed)
         .toList();
 
-    // Organize todos by time
+    // Organize todos by time and date, handling null values
     pendingTodos.sort((a, b) {
+      // First priority: time
       if (a.time != null && b.time != null) {
         return a.time!.compareTo(b.time!);
       } else if (a.time != null) {
-        return -1;
+        return -1; // a has time, b doesn't - a comes first
       } else if (b.time != null) {
-        return 1;
-      } else {
-        return a.date.compareTo(b.date);
+        return 1; // b has time, a doesn't - b comes first
       }
+
+      // Second priority: date
+      if (a.date != null && b.date != null) {
+        return a.date!.compareTo(b.date!);
+      } else if (a.date != null) {
+        return -1; // a has date, b doesn't - a comes first
+      } else if (b.date != null) {
+        return 1; // b has date, a doesn't - b comes first
+      }
+
+      // Both have no time or date, sort by created date
+      return a.createdAt.compareTo(b.createdAt);
     });
 
     completedTodos.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));

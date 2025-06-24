@@ -25,7 +25,8 @@ class TodoItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCompleted = todo.status == TodoStatus.completed;
-    final isOverdue = !isCompleted && AppDateUtils.isOverdue(todo.date);
+    final isOverdue =
+        !isCompleted && todo.date != null && AppDateUtils.isOverdue(todo.date!);
 
     return Column(
       children: [
@@ -105,30 +106,37 @@ class TodoItemWidget extends StatelessWidget {
 
                         const SizedBox(height: 4),
 
-                        // Date/Time
-                        Text(
-                          todo.time != null
-                              ? AppDateUtils.formatDateTime(todo.time!)
-                              : AppDateUtils.formatDate(todo.date),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isCompleted
-                                ? AppColors.textSecondary.withValues(alpha: 0.4)
-                                : isOverdue
-                                ? AppColors.error
-                                : AppColors.textSecondary,
-                            fontWeight: isOverdue && !isCompleted
-                                ? FontWeight.w500
-                                : FontWeight.normal,
-                            decoration: isCompleted
-                                ? TextDecoration.lineThrough
-                                : TextDecoration.none,
-                            decorationColor: isCompleted
-                                ? AppColors.textSecondary.withValues(alpha: 0.4)
-                                : null,
-                            decorationThickness: isCompleted ? 1.5 : null,
+                        // Date/Time - Handle null dates
+                        if (todo.time != null || todo.date != null)
+                          Text(
+                            todo.time != null
+                                ? AppDateUtils.formatDateTime(todo.time!)
+                                : todo.date != null
+                                ? AppDateUtils.formatDate(todo.date!)
+                                : 'No date set',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isCompleted
+                                  ? AppColors.textSecondary.withValues(
+                                      alpha: 0.4,
+                                    )
+                                  : isOverdue
+                                  ? AppColors.error
+                                  : AppColors.textSecondary,
+                              fontWeight: isOverdue && !isCompleted
+                                  ? FontWeight.w500
+                                  : FontWeight.normal,
+                              decoration: isCompleted
+                                  ? TextDecoration.lineThrough
+                                  : TextDecoration.none,
+                              decorationColor: isCompleted
+                                  ? AppColors.textSecondary.withValues(
+                                      alpha: 0.4,
+                                    )
+                                  : null,
+                              decorationThickness: isCompleted ? 1.5 : null,
+                            ),
                           ),
-                        ),
 
                         // Notes if available
                         if (todo.notes != null && todo.notes!.isNotEmpty) ...[
@@ -158,7 +166,7 @@ class TodoItemWidget extends StatelessWidget {
                           ),
                         ],
 
-                        // Overdue badge (only show if not completed)
+                        // Overdue badge (only show if not completed and has date)
                         if (isOverdue && !isCompleted) ...[
                           const SizedBox(height: 6),
                           Container(

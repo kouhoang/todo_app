@@ -11,7 +11,7 @@ CREATE TABLE todos (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title TEXT NOT NULL,
   notes TEXT,
-  date DATE NOT NULL,
+  date DATE, 
   time TIMESTAMP WITH TIME ZONE,
   category TEXT NOT NULL CHECK (category IN ('list', 'calendar', 'trophy')),
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed')),

@@ -24,7 +24,7 @@ class _AddTodoViewState extends State<AddTodoView> {
   final _notesController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  DateTime _selectedDate = DateTime.now();
+  DateTime? _selectedDate; // Changed to nullable
   TimeOfDay? _selectedTime;
   TodoCategory _selectedCategory = TodoCategory.list;
   bool _isLoading = false;
@@ -42,7 +42,7 @@ class _AddTodoViewState extends State<AddTodoView> {
   void _initializeWithTodo(TodoEntity todo) {
     _titleController.text = todo.title;
     _notesController.text = todo.notes ?? '';
-    _selectedDate = todo.date;
+    _selectedDate = todo.date; // Can be null
     _selectedTime = todo.time != null
         ? TimeOfDay.fromDateTime(todo.time!)
         : null;
@@ -227,12 +227,14 @@ class _AddTodoViewState extends State<AddTodoView> {
                             child: Row(
                               children: [
                                 Text(
-                                  AppDateUtils.formatDate(_selectedDate),
+                                  _selectedDate != null
+                                      ? AppDateUtils.formatDate(_selectedDate!)
+                                      : 'Date',
                                   style: TextStyle(
                                     color: _isLoading
                                         ? Colors.grey[400]
                                         : Colors.grey,
-                                    fontSize: 16,
+                                    fontSize: 14,
                                   ),
                                 ),
                                 const Spacer(),
@@ -412,7 +414,7 @@ class _AddTodoViewState extends State<AddTodoView> {
   Future<void> _selectDate() async {
     final date = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: _selectedDate ?? DateTime.now(), // Use current date if null
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
@@ -448,11 +450,11 @@ class _AddTodoViewState extends State<AddTodoView> {
     });
 
     try {
-      final DateTime? dateTime = _selectedTime != null
+      final DateTime? dateTime = _selectedTime != null && _selectedDate != null
           ? DateTime(
-              _selectedDate.year,
-              _selectedDate.month,
-              _selectedDate.day,
+              _selectedDate!.year,
+              _selectedDate!.month,
+              _selectedDate!.day,
               _selectedTime!.hour,
               _selectedTime!.minute,
             )
@@ -491,7 +493,6 @@ class _AddTodoViewState extends State<AddTodoView> {
               ? 'Task updated successfully!'
               : 'Task created successfully!',
         );
-        // Return true to notify if having changed
         Navigator.pop(context, true);
       }
     } catch (e) {

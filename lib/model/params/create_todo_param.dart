@@ -4,7 +4,7 @@ import 'package:todo_app/model/enums/todo_status.dart';
 class CreateTodoParams {
   final String title;
   final String? notes;
-  final DateTime date;
+  final DateTime? date;
   final DateTime? time;
   final TodoCategory category;
   final String userId;
@@ -12,7 +12,7 @@ class CreateTodoParams {
   const CreateTodoParams({
     required this.title,
     this.notes,
-    required this.date,
+    this.date,
     this.time,
     required this.category,
     required this.userId,
@@ -22,7 +22,7 @@ class CreateTodoParams {
     return {
       'title': title,
       'notes': notes,
-      'date': date.toIso8601String(),
+      'date': date?.toIso8601String(),
       'time': time?.toIso8601String(),
       'category': category.name,
       'status': TodoStatus.pending.name,

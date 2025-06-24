@@ -200,7 +200,7 @@ class _HomeViewBody extends StatelessWidget {
               children: [
                 // Pending todos section
                 if (pendingTodos.isNotEmpty) ...[
-                  _buildSectionHeader('Today\'s Tasks', pendingTodos.length),
+                  _buildSectionHeader('Tasks', pendingTodos.length),
                   const SizedBox(height: 16),
                   _buildTodoGroup(context, pendingTodos, false),
                 ],
