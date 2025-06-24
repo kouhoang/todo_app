@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todo_app/global/auth/auth_cubit.dart';
 import 'package:todo_app/global/user/user_cubit.dart';
+import 'package:todo_app/services/ios_notification_service.dart';
 
 import 'configs/app_config.dart';
 import 'common/app_theme.dart';
@@ -23,10 +24,17 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _initializeApp() async {
-    await Supabase.initialize(
-      url: AppConfig.supabaseUrl,
-      anonKey: AppConfig.supabaseAnonKey,
-    );
+    try {
+      // Initialize Supabase
+      await Supabase.initialize(
+        url: AppConfig.supabaseUrl,
+        anonKey: AppConfig.supabaseAnonKey,
+      );
+
+      await NotificationService().initialize();
+    } catch (e) {
+      // Handle initialization error silently or add proper error handling
+    }
   }
 
   @override

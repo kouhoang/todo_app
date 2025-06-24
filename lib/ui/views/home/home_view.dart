@@ -5,7 +5,7 @@ import 'package:todo_app/global/auth/auth_cubit.dart';
 import 'package:todo_app/ui/views/todo/todo_cubit.dart';
 import 'package:todo_app/model/entities/todo_entity.dart';
 import 'package:todo_app/model/enums/item_position.dart';
-import 'package:todo_app/ui/views/widgets/todo_item_widget.dart';
+import 'package:todo_app/ui/widgets/todo_item_widget.dart';
 import '../../../utils/date_utils.dart';
 import '../add_todo/add_todo_view.dart';
 

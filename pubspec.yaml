@@ -43,7 +43,7 @@ dependencies:
   supabase_flutter: ^2.0.0
   
   # Device Info
-  device_info_plus: ^9.1.0
+  device_info_plus: ^11.5.0
   
   # UI
 
@@ -58,6 +58,19 @@ dependencies:
 
   # Colors
   hybrid_hex_color_converter: ^0.0.2
+
+  # Notifications
+  flutter_local_notifications: ^17.2.2
+
+  # Time
+  timezone: ^0.9.4
+
+  # Permission
+  permission_handler: ^11.3.1
+
+  # Indentify
+  flutter_secure_storage: ^9.2.4
+  crypto: ^3.0.3
   
 dev_dependencies:
   flutter_test:

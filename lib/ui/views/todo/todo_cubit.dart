@@ -5,12 +5,14 @@ import 'package:todo_app/model/entities/todo_entity.dart';
 import 'package:todo_app/model/enums/todo_status.dart';
 import 'package:todo_app/model/params/create_todo_param.dart';
 import 'package:todo_app/model/params/update_todo_param.dart';
+import 'package:todo_app/services/ios_notification_service.dart';
 import '../../../repositories/todo_repository.dart';
 
 part 'todo_state.dart';
 
 class TodoCubit extends Cubit<TodoState> {
   final TodoRepository _todoRepository = TodoRepository();
+  final NotificationService _notificationService = NotificationService();
   RealtimeChannel? _subscription;
   String? _currentUserId;
 
@@ -90,9 +92,13 @@ class TodoCubit extends Cubit<TodoState> {
 
   Future<void> createTodo(CreateTodoParams params) async {
     try {
-      await _todoRepository.createTodo(params);
+      final newTodo = await _todoRepository.createTodo(params);
 
-      // Manual refresh to ensure UI is updated
+      // Schedule notification if todo has time
+      if (newTodo.time != null) {
+        await _notificationService.scheduleTodoNotification(newTodo);
+      }
+
       await refreshTodos();
     } catch (e) {
       emit(TodoError(e.toString()));
@@ -101,9 +107,11 @@ class TodoCubit extends Cubit<TodoState> {
 
   Future<void> updateTodo(String todoId, UpdateTodoParams params) async {
     try {
-      await _todoRepository.updateTodo(todoId, params);
+      final updatedTodo = await _todoRepository.updateTodo(todoId, params);
 
-      // Manual refresh to ensure UI is updated
+      // Update notification
+      await _notificationService.updateTodoNotification(updatedTodo);
+
       await refreshTodos();
     } catch (e) {
       emit(TodoError(e.toString()));
@@ -117,6 +125,13 @@ class TodoCubit extends Cubit<TodoState> {
           : TodoStatus.pending;
 
       await updateTodo(todo.id, UpdateTodoParams(status: newStatus));
+
+      // Handle notification based on status
+      if (newStatus == TodoStatus.completed) {
+        await _notificationService.cancelTodoNotification(todo.id);
+      } else if (todo.time != null) {
+        await _notificationService.scheduleTodoNotification(todo);
+      }
     } catch (e) {
       emit(TodoError(e.toString()));
     }
@@ -125,8 +140,7 @@ class TodoCubit extends Cubit<TodoState> {
   Future<void> deleteTodo(String todoId) async {
     try {
       await _todoRepository.deleteTodo(todoId);
-
-      // Manual refresh to ensure UI is updated
+      await _notificationService.cancelTodoNotification(todoId);
       await refreshTodos();
     } catch (e) {
       emit(TodoError(e.toString()));

@@ -45,5 +45,25 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- Notification permissions -->
+    <key>NSUserNotificationAlertStyle</key>
+    <string>alert</string>
+    
+    <!-- Background app refresh -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>background-processing</string>
+        <string>background-fetch</string>
+    </array>
+    
+    <!-- Privacy usage descriptions -->
+    <key>NSUserNotificationsUsageDescription</key>
+    <string>This app needs notification permission to remind you about your todos</string>
+
+	<key>keychain-access-groups</key>
+    <array>
+        <string>$(AppIdentifierPrefix)com.yourcompany.todoapp</string>
+    </array>
 </dict>
 </plist>

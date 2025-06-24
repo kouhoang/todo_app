@@ -7,7 +7,7 @@ import 'package:todo_app/model/entities/todo_entity.dart';
 import 'package:todo_app/model/enums/todo_enum.dart';
 import 'package:todo_app/model/params/create_todo_param.dart';
 import 'package:todo_app/model/params/update_todo_param.dart';
-import 'package:todo_app/ui/views/widgets/category_selector_widget.dart';
+import 'package:todo_app/ui/widgets/category_selector_widget.dart';
 import 'package:todo_app/utils/date_utils.dart';
 
 class AddTodoView extends StatefulWidget {
