@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 
 class AppDateUtils {
   static String formatDate(DateTime date) {
-    return DateFormat('MMM dd, yyyy').format(date);
+    return DateFormat('MMMM dd, yyyy').format(date);
   }
 
   static String formatTime(DateTime time) {
@@ -10,7 +10,7 @@ class AppDateUtils {
   }
 
   static String formatDateTime(DateTime dateTime) {
-    return DateFormat('MMM dd, yyyy - hh:mm a').format(dateTime);
+    return DateFormat('MMMM dd, yyyy - hh:mm a').format(dateTime);
   }
 
   static bool isToday(DateTime date) {
