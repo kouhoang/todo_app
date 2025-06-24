@@ -260,12 +260,34 @@ class _HomeViewBody extends StatelessWidget {
             position = ItemPosition.middle;
           }
 
-          return TodoItemWidget(
-            todo: todo,
-            position: position,
-            onToggle: () => context.read<TodoCubit>().toggleTodoStatus(todo),
-            onEdit: () => _showEditTodoModel(context, todo),
-            onDelete: () => _showDeleteConfirmation(context, todo),
+          return Dismissible(
+            key: Key(todo.id),
+            direction: DismissDirection.endToStart,
+            confirmDismiss: (direction) async {
+              return await _showSwipeDeleteConfirmation(context, todo);
+            },
+            onDismissed: (direction) {
+              context.read<TodoCubit>().deleteTodo(todo.id);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Todo "${todo.title}" deleted'),
+                  backgroundColor: Colors.red,
+                  action: SnackBarAction(
+                    label: 'UNDO',
+                    textColor: Colors.white,
+                    onPressed: () {},
+                  ),
+                ),
+              );
+            },
+            background: _buildSwipeDeleteBackground(),
+            child: TodoItemWidget(
+              todo: todo,
+              position: position,
+              onToggle: () => context.read<TodoCubit>().toggleTodoStatus(todo),
+              onEdit: () => _showEditTodoModel(context, todo),
+              onDelete: () => _showDeleteConfirmation(context, todo),
+            ),
           );
         }).toList(),
       ),
@@ -303,6 +325,32 @@ class _HomeViewBody extends StatelessWidget {
     );
   }
 
+  Widget _buildSwipeDeleteBackground() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.red,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      alignment: Alignment.centerRight,
+      padding: const EdgeInsets.only(right: 20),
+      child: const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.delete_forever, color: Colors.white, size: 28),
+          SizedBox(height: 4),
+          Text(
+            'Delete',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showAddTodoModel(BuildContext context) async {
     final todoCubit = context.read<TodoCubit>();
 
@@ -335,6 +383,42 @@ class _HomeViewBody extends StatelessWidget {
     if (result == true) {
       todoCubit.refreshTodos();
     }
+  }
+
+  Future<bool?> _showSwipeDeleteConfirmation(
+    BuildContext context,
+    TodoEntity todo,
+  ) {
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete Todo'),
+        content: RichText(
+          text: TextSpan(
+            style: const TextStyle(color: Colors.black87, fontSize: 16),
+            children: [
+              const TextSpan(text: 'Are you sure you want to delete '),
+              TextSpan(
+                text: '"${todo.title}"',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const TextSpan(text: '?'),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showDeleteConfirmation(BuildContext context, TodoEntity todo) {
