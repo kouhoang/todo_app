@@ -77,7 +77,7 @@ class TodoEntity extends Equatable {
       time: map['time'] != null ? DateTime.parse(map['time']) : null,
       category: TodoCategory.values.firstWhere(
         (e) => e.name == map['category'],
-        orElse: () => TodoCategory.personal,
+        orElse: () => TodoCategory.list,
       ),
       status: TodoStatus.values.firstWhere(
         (e) => e.name == map['status'],

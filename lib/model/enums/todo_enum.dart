@@ -1,27 +1,27 @@
 enum TodoCategory {
-  work,
-  personal,
-  important;
+  list,
+  calendar,
+  trophy;
 
   String get displayName {
     switch (this) {
-      case TodoCategory.work:
-        return 'Work';
-      case TodoCategory.personal:
-        return 'Personal';
-      case TodoCategory.important:
-        return 'Important';
+      case TodoCategory.list:
+        return 'List';
+      case TodoCategory.calendar:
+        return 'Calendar';
+      case TodoCategory.trophy:
+        return 'Trophy';
     }
   }
 
   String get iconName {
     switch (this) {
-      case TodoCategory.work:
-        return 'work';
-      case TodoCategory.personal:
-        return 'personal';
-      case TodoCategory.important:
-        return 'star';
+      case TodoCategory.list:
+        return 'list';
+      case TodoCategory.calendar:
+        return 'calendar';
+      case TodoCategory.trophy:
+        return 'trophy';
     }
   }
 }

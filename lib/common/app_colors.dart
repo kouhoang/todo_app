@@ -11,9 +11,9 @@ class AppColors {
   static final Color warning = HexColor.fromHex('#F59E0B');
 
   // Task Category Colors
-  static final Color workCategory = HexColor.fromHex('#3B82F6');
-  static final Color personalCategory = HexColor.fromHex('#8B5CF6');
-  static final Color importantCategory = HexColor.fromHex('#F59E0B');
+  static final Color listCategory = HexColor.fromHex('#3B82F6');
+  static final Color calendarCategory = HexColor.fromHex('#8B5CF6');
+  static final Color trophyCategory = HexColor.fromHex('#F59E0B');
 
   // Text Colors
   static final Color textPrimary = HexColor.fromHex('#1F2937');

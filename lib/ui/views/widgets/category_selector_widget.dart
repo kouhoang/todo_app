@@ -87,22 +87,22 @@ class CategorySelectorWidget extends StatelessWidget {
 
   Color _getCategoryColor(TodoCategory category) {
     switch (category) {
-      case TodoCategory.work:
-        return AppColors.workCategory;
-      case TodoCategory.personal:
-        return AppColors.personalCategory;
-      case TodoCategory.important:
-        return AppColors.importantCategory;
+      case TodoCategory.list:
+        return AppColors.listCategory;
+      case TodoCategory.calendar:
+        return AppColors.calendarCategory;
+      case TodoCategory.trophy:
+        return AppColors.trophyCategory;
     }
   }
 
   String _getCategoryIconAsset(TodoCategory category) {
     switch (category) {
-      case TodoCategory.work:
+      case TodoCategory.list:
         return 'assets/file-list-line.png';
-      case TodoCategory.personal:
+      case TodoCategory.calendar:
         return 'assets/calendar-event-fill.png';
-      case TodoCategory.important:
+      case TodoCategory.trophy:
         return 'assets/trophy-line.png';
     }
   }

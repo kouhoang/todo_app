@@ -26,7 +26,7 @@ class _AddTodoViewState extends State<AddTodoView> {
 
   DateTime _selectedDate = DateTime.now();
   TimeOfDay? _selectedTime;
-  TodoCategory _selectedCategory = TodoCategory.personal;
+  TodoCategory _selectedCategory = TodoCategory.list;
   bool _isLoading = false;
 
   bool get isEditing => widget.todo != null;
