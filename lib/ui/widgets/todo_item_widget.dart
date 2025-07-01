@@ -25,8 +25,9 @@ class TodoItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCompleted = todo.status == TodoStatus.completed;
+    // Sử dụng logic overdue mới
     final isOverdue =
-        !isCompleted && todo.date != null && AppDateUtils.isOverdue(todo.date!);
+        !isCompleted && AppDateUtils.isOverdue(todo.date, todo.time);
 
     return Column(
       children: [
@@ -89,6 +90,7 @@ class TodoItemWidget extends StatelessWidget {
                         Text(
                           todo.title,
                           style: TextStyle(
+                            fontFamily: 'Inter',
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: isCompleted
@@ -106,16 +108,16 @@ class TodoItemWidget extends StatelessWidget {
 
                         const SizedBox(height: 4),
 
-                        // Date/Time - Handle null dates
+                        // Date/Time - Sử dụng method format mới
                         if (todo.time != null || todo.date != null)
                           Text(
-                            todo.time != null
-                                ? AppDateUtils.formatDateTime(todo.time!)
-                                : todo.date != null
-                                ? AppDateUtils.formatDate(todo.date!)
-                                : 'No date set',
+                            AppDateUtils.formatDisplayDateTime(
+                              todo.date,
+                              todo.time,
+                            ),
                             style: TextStyle(
-                              fontSize: 12,
+                              fontFamily: 'Inter',
+                              fontSize: 14,
                               color: isCompleted
                                   ? AppColors.textSecondary.withValues(
                                       alpha: 0.4,
@@ -166,7 +168,7 @@ class TodoItemWidget extends StatelessWidget {
                           ),
                         ],
 
-                        // Overdue badge (only show if not completed and has date)
+                        // Overdue badge (chỉ hiện khi overdue và chưa completed)
                         if (isOverdue && !isCompleted) ...[
                           const SizedBox(height: 6),
                           Container(
@@ -218,7 +220,7 @@ class TodoItemWidget extends StatelessWidget {
           ),
         ),
 
-        // Divider giữa các item (trừ item cuối)
+        // Divider among items
         if (position != ItemPosition.single && position != ItemPosition.last)
           Container(
             height: 1,

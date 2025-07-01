@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/common/app_colors.dart';
 import 'package:todo_app/global/auth/auth_cubit.dart';
-import 'package:todo_app/ui/views/todo/todo_cubit.dart';
+import 'package:todo_app/ui/todo/todo_cubit.dart';
 import 'package:todo_app/model/entities/todo_entity.dart';
 import 'package:todo_app/model/enums/todo_enum.dart';
 import 'package:todo_app/model/params/create_todo_param.dart';
@@ -24,7 +24,7 @@ class _AddTodoViewState extends State<AddTodoView> {
   final _notesController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  DateTime? _selectedDate; // Changed to nullable
+  DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   TodoCategory _selectedCategory = TodoCategory.list;
   bool _isLoading = false;
@@ -435,10 +435,13 @@ class _AddTodoViewState extends State<AddTodoView> {
     if (time != null) {
       setState(() {
         _selectedTime = time;
+        // Nếu chọn thời gian mà không có ngày, tạo DateTime chỉ với thời gian hôm nay
+        // Điều này cho phép hiển thị "chỉ thời gian" trên UI
       });
     }
   }
 
+  // Cập nhật method _saveTodo():
   Future<void> _saveTodo() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -450,15 +453,31 @@ class _AddTodoViewState extends State<AddTodoView> {
     });
 
     try {
-      final DateTime? dateTime = _selectedTime != null && _selectedDate != null
-          ? DateTime(
-              _selectedDate!.year,
-              _selectedDate!.month,
-              _selectedDate!.day,
-              _selectedTime!.hour,
-              _selectedTime!.minute,
-            )
-          : null;
+      DateTime? dateTime;
+
+      // Logic mới cho việc xử lý date/time
+      if (_selectedTime != null) {
+        if (_selectedDate != null) {
+          // Có cả ngày và giờ
+          dateTime = DateTime(
+            _selectedDate!.year,
+            _selectedDate!.month,
+            _selectedDate!.day,
+            _selectedTime!.hour,
+            _selectedTime!.minute,
+          );
+        } else {
+          // Chỉ có giờ, không có ngày - sử dụng ngày hôm nay
+          final now = DateTime.now();
+          dateTime = DateTime(
+            now.year,
+            now.month,
+            now.day,
+            _selectedTime!.hour,
+            _selectedTime!.minute,
+          );
+        }
+      }
 
       if (isEditing) {
         final params = UpdateTodoParams(
@@ -467,7 +486,7 @@ class _AddTodoViewState extends State<AddTodoView> {
               ? null
               : _notesController.text.trim(),
           date: _selectedDate,
-          time: dateTime,
+          time: dateTime, // Sử dụng dateTime đã xử lý
           category: _selectedCategory,
         );
 
@@ -479,7 +498,7 @@ class _AddTodoViewState extends State<AddTodoView> {
               ? null
               : _notesController.text.trim(),
           date: _selectedDate,
-          time: dateTime,
+          time: dateTime, // Sử dụng dateTime đã xử lý
           category: _selectedCategory,
           userId: authState.user.id,
         );

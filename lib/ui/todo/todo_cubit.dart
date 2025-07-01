@@ -6,7 +6,7 @@ import 'package:todo_app/model/enums/todo_status.dart';
 import 'package:todo_app/model/params/create_todo_param.dart';
 import 'package:todo_app/model/params/update_todo_param.dart';
 import 'package:todo_app/services/ios_notification_service.dart';
-import '../../../repositories/todo_repository.dart';
+import '../../repositories/todo_repository.dart';
 
 part 'todo_state.dart';
 

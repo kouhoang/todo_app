@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/common/app_colors.dart';
 import 'package:todo_app/global/auth/auth_cubit.dart';
-import 'package:todo_app/ui/views/todo/todo_cubit.dart';
+import 'package:todo_app/ui/todo/todo_cubit.dart';
 import 'package:todo_app/model/entities/todo_entity.dart';
 import 'package:todo_app/model/enums/item_position.dart';
 import 'package:todo_app/ui/widgets/todo_item_widget.dart';
