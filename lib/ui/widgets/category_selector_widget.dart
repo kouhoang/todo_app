@@ -4,7 +4,7 @@ import 'package:todo_app/model/enums/todo_enum.dart';
 
 class CategorySelectorWidget extends StatelessWidget {
   final TodoCategory selectedCategory;
-  final Function(TodoCategory)? onCategorySelected; // Made nullable
+  final Function(TodoCategory)? onCategorySelected;
   final bool isEnabled;
 
   const CategorySelectorWidget({

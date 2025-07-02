@@ -25,7 +25,6 @@ class TodoItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCompleted = todo.status == TodoStatus.completed;
-    // Sử dụng logic overdue mới
     final isOverdue =
         !isCompleted && AppDateUtils.isOverdue(todo.date, todo.time);
 
@@ -108,7 +107,7 @@ class TodoItemWidget extends StatelessWidget {
 
                         const SizedBox(height: 4),
 
-                        // Date/Time - Sử dụng method format mới
+                        // Date/Time
                         if (todo.time != null || todo.date != null)
                           Text(
                             AppDateUtils.formatDisplayDateTime(
@@ -168,7 +167,7 @@ class TodoItemWidget extends StatelessWidget {
                           ),
                         ],
 
-                        // Overdue badge (chỉ hiện khi overdue và chưa completed)
+                        // Overdue badge
                         if (isOverdue && !isCompleted) ...[
                           const SizedBox(height: 6),
                           Container(

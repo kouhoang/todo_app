@@ -9,6 +9,8 @@ class AppColors {
   static final Color error = HexColor.fromHex('#EF4444');
   static final Color success = HexColor.fromHex('#10B981');
   static final Color warning = HexColor.fromHex('#F59E0B');
+  static final Color boxBackground = Color(0xFFF8F8F8);
+  static final Color boxBorder = Color(0xFFE0E0E0);
 
   // Task Category Colors
   static final Color listCategory = HexColor.fromHex('#3B82F6');

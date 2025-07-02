@@ -212,10 +212,10 @@ class _AddTodoViewState extends State<AddTodoView> {
                       const SizedBox(height: 8),
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF8F8F8),
+                          color: AppColors.boxBackground,
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
-                            color: const Color(0xFFE0E0E0),
+                            color: AppColors.boxBorder,
                             width: 1,
                           ),
                         ),
@@ -272,10 +272,10 @@ class _AddTodoViewState extends State<AddTodoView> {
                       const SizedBox(height: 8),
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF8F8F8),
+                          color: AppColors.boxBackground,
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
-                            color: const Color(0xFFE0E0E0),
+                            color: AppColors.boxBorder,
                             width: 1,
                           ),
                         ),
@@ -330,9 +330,9 @@ class _AddTodoViewState extends State<AddTodoView> {
             Container(
               height: 200,
               decoration: BoxDecoration(
-                color: const Color(0xFFF8F8F8),
+                color: AppColors.boxBackground,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
+                border: Border.all(color: AppColors.boxBorder, width: 1),
               ),
               clipBehavior: Clip.hardEdge,
               child: TextFormField(
@@ -435,13 +435,10 @@ class _AddTodoViewState extends State<AddTodoView> {
     if (time != null) {
       setState(() {
         _selectedTime = time;
-        // Nếu chọn thời gian mà không có ngày, tạo DateTime chỉ với thời gian hôm nay
-        // Điều này cho phép hiển thị "chỉ thời gian" trên UI
       });
     }
   }
 
-  // Cập nhật method _saveTodo():
   Future<void> _saveTodo() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -455,10 +452,9 @@ class _AddTodoViewState extends State<AddTodoView> {
     try {
       DateTime? dateTime;
 
-      // Logic mới cho việc xử lý date/time
       if (_selectedTime != null) {
         if (_selectedDate != null) {
-          // Có cả ngày và giờ
+          // Have both time and date
           dateTime = DateTime(
             _selectedDate!.year,
             _selectedDate!.month,
@@ -467,7 +463,7 @@ class _AddTodoViewState extends State<AddTodoView> {
             _selectedTime!.minute,
           );
         } else {
-          // Chỉ có giờ, không có ngày - sử dụng ngày hôm nay
+          // Only time, no date - use today's date
           final now = DateTime.now();
           dateTime = DateTime(
             now.year,
@@ -486,7 +482,7 @@ class _AddTodoViewState extends State<AddTodoView> {
               ? null
               : _notesController.text.trim(),
           date: _selectedDate,
-          time: dateTime, // Sử dụng dateTime đã xử lý
+          time: dateTime,
           category: _selectedCategory,
         );
 
@@ -498,7 +494,7 @@ class _AddTodoViewState extends State<AddTodoView> {
               ? null
               : _notesController.text.trim(),
           date: _selectedDate,
-          time: dateTime, // Sử dụng dateTime đã xử lý
+          time: dateTime,
           category: _selectedCategory,
           userId: authState.user.id,
         );

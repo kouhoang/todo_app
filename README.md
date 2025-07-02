@@ -44,6 +44,10 @@
   <img src="images/image3.png" style="width: 25%;" alt="Image">
 </p>
 
+<p align="center">
+  <img src="images/image4.png" style="width: 25%;" alt="Image">
+</p>
+
 ### Yêu cầu
 - Flutter SDK (3.0.0+)
 - Xcode (cho iOS)
