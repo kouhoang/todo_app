@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/common/app_colors.dart';
+import 'package:todo_app/common/app_icons.dart';
 import 'package:todo_app/model/entities/todo_entity.dart';
 import 'package:todo_app/model/enums/todo_enum.dart';
 import 'package:todo_app/model/enums/todo_status.dart';
@@ -263,11 +264,11 @@ class TodoItemWidget extends StatelessWidget {
   String _getCategoryIconAsset(TodoCategory category) {
     switch (category) {
       case TodoCategory.list:
-        return 'assets/file-list-line.png';
+        return AppIcons.iconFileList;
       case TodoCategory.calendar:
-        return 'assets/calendar-event-fill.png';
+        return AppIcons.iconCalendarEvent;
       case TodoCategory.trophy:
-        return 'assets/trophy-line.png';
+        return AppIcons.iconTrophy;
     }
   }
 }
